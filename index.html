@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Markdown Preview & Editor Online — Free Live Markdown to HTML | BeLikeNative</title>
+<meta name="description" content="Free online markdown editor with live preview. Paste or type markdown, see rendered HTML instantly. Syntax highlighting, export HTML, writing quality checks. No signup required.">
+<meta name="keywords" content="markdown preview, markdown editor online, markdown to html, live markdown editor, markdown renderer, free markdown tool">
+<meta name="author" content="BeLikeNative">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://theluckystrike.github.io/bln-markdown-preview/">
+<meta property="og:title" content="Markdown Preview & Editor Online — Free | BeLikeNative">
+<meta property="og:description" content="Free live markdown editor with instant preview. Convert markdown to HTML, check writing quality, export results.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://theluckystrike.github.io/bln-markdown-preview/">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f1117;color:#e1e4e8;min-height:100vh;display:flex;flex-direction:column}
+header{background:#161b22;border-bottom:1px solid #30363d;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.logo{font-size:18px;font-weight:700;color:#58a6ff}
+.logo span{color:#f0883e}
+.toolbar{display:flex;gap:6px;flex-wrap:wrap}
+.toolbar button{background:#21262d;color:#c9d1d9;border:1px solid #30363d;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:13px;transition:background .2s}
+.toolbar button:hover{background:#30363d}
+.toolbar button.primary{background:#238636;border-color:#2ea043;color:#fff}
+.toolbar button.primary:hover{background:#2ea043}
+.toolbar button.accent{background:#1f6feb;border-color:#388bfd;color:#fff}
+.toolbar button.accent:hover{background:#388bfd}
+.main{flex:1;display:flex;overflow:hidden}
+.pane{flex:1;display:flex;flex-direction:column;min-width:0}
+.pane-header{background:#161b22;padding:8px 16px;font-size:13px;font-weight:600;color:#8b949e;border-bottom:1px solid #30363d;display:flex;justify-content:space-between;align-items:center}
+.divider{width:3px;background:#30363d;cursor:col-resize;flex-shrink:0}
+#editor{flex:1;width:100%;background:#0d1117;color:#c9d1d9;border:none;padding:16px;font-family:'SF Mono',Monaco,Consolas,monospace;font-size:14px;line-height:1.6;resize:none;outline:none;tab-size:2}
+#preview{flex:1;overflow-y:auto;padding:16px 24px;background:#0d1117;line-height:1.7;font-size:15px}
+#preview h1{font-size:28px;border-bottom:1px solid #30363d;padding-bottom:8px;margin:16px 0 12px;color:#f0f6fc}
+#preview h2{font-size:22px;border-bottom:1px solid #21262d;padding-bottom:6px;margin:14px 0 10px;color:#f0f6fc}
+#preview h3{font-size:18px;margin:12px 0 8px;color:#f0f6fc}
+#preview h4{font-size:16px;margin:10px 0 6px;color:#f0f6fc}
+#preview h5{font-size:14px;margin:8px 0 4px;color:#f0f6fc}
+#preview h6{font-size:13px;margin:8px 0 4px;color:#8b949e}
+#preview p{margin:0 0 12px;color:#c9d1d9}
+#preview a{color:#58a6ff;text-decoration:none}
+#preview a:hover{text-decoration:underline}
+#preview strong{color:#f0f6fc}
+#preview em{font-style:italic}
+#preview code{background:#161b22;padding:2px 6px;border-radius:4px;font-family:'SF Mono',Monaco,Consolas,monospace;font-size:13px;color:#f0883e}
+#preview pre{background:#161b22;border:1px solid #30363d;border-radius:6px;padding:14px;margin:0 0 12px;overflow-x:auto}
+#preview pre code{background:none;padding:0;color:#c9d1d9;font-size:13px;line-height:1.5}
+#preview blockquote{border-left:3px solid #3fb950;padding:4px 16px;margin:0 0 12px;color:#8b949e;background:#0d1117}
+#preview ul,#preview ol{margin:0 0 12px;padding-left:24px}
+#preview li{margin:2px 0}
+#preview img{max-width:100%;border-radius:6px;margin:8px 0}
+#preview hr{border:none;border-top:2px solid #30363d;margin:16px 0}
+#preview table{border-collapse:collapse;width:100%;margin:0 0 12px}
+#preview th,#preview td{border:1px solid #30363d;padding:8px 12px;text-align:left}
+#preview th{background:#161b22;font-weight:600;color:#f0f6fc}
+#preview .kw-keyword{color:#ff7b72}
+#preview .kw-string{color:#a5d6ff}
+#preview .kw-comment{color:#8b949e;font-style:italic}
+#preview .kw-number{color:#79c0ff}
+#preview .kw-func{color:#d2a8ff}
+.status-bar{background:#161b22;border-top:1px solid #30363d;padding:6px 16px;font-size:12px;color:#8b949e;display:flex;gap:16px;flex-wrap:wrap}
+.quality-panel{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#161b22;border:1px solid #30363d;border-radius:10px;padding:24px;max-width:520px;width:90%;max-height:70vh;overflow-y:auto;z-index:100;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.quality-panel.show{display:block}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99}
+.overlay.show{display:block}
+.quality-panel h3{margin-bottom:12px;color:#f0f6fc}
+.quality-item{padding:8px 12px;margin:6px 0;border-radius:6px;font-size:13px;line-height:1.5}
+.quality-item.warning{background:#2d1b00;border-left:3px solid #f0883e;color:#f0883e}
+.quality-item.error{background:#2d0000;border-left:3px solid #f85149;color:#f85149}
+.quality-item.good{background:#0d2818;border-left:3px solid #3fb950;color:#3fb950}
+.quality-close{position:absolute;top:12px;right:12px;background:none;border:none;color:#8b949e;font-size:20px;cursor:pointer}
+.powered-by{margin-top:16px;padding-top:12px;border-top:1px solid #30363d;font-size:12px;color:#8b949e;text-align:center}
+.powered-by a{color:#58a6ff}
+footer{background:#161b22;border-top:1px solid #30363d;padding:16px 20px;text-align:center;font-size:12px;color:#8b949e}
+footer a{color:#58a6ff;text-decoration:none;margin:0 8px}
+footer a:hover{text-decoration:underline}
+.toast{position:fixed;bottom:20px;right:20px;background:#238636;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;z-index:200;opacity:0;transition:opacity .3s}
+.toast.show{opacity:1}
+@media(max-width:768px){
+.main{flex-direction:column}
+.divider{width:100%;height:3px;cursor:row-resize}
+header{padding:8px 12px}
+.toolbar button{padding:4px 8px;font-size:12px}
+}
+</style>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"WebApplication",
+  "name":"Markdown Preview & Editor Online",
+  "url":"https://theluckystrike.github.io/bln-markdown-preview/",
+  "description":"Free online markdown editor with live preview. Convert markdown to HTML instantly with syntax highlighting and writing quality checks.",
+  "applicationCategory":"DeveloperApplication",
+  "operatingSystem":"Any",
+  "offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},
+  "author":{"@type":"Organization","name":"BeLikeNative","url":"https://belikenative.com"}
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"FAQPage",
+  "mainEntity":[
+    {"@type":"Question","name":"How do I use this markdown editor?","acceptedAnswer":{"@type":"Answer","text":"Type or paste markdown in the left editor pane. The right pane shows a live HTML preview that updates instantly. Use the toolbar buttons to copy HTML, check writing quality, or export as an HTML file."}},
+    {"@type":"Question","name":"What markdown syntax is supported?","acceptedAnswer":{"@type":"Answer","text":"This editor supports headings (h1-h6), bold, italic, links, images, code blocks with syntax highlighting, ordered and unordered lists, blockquotes, tables, and horizontal rules."}},
+    {"@type":"Question","name":"Can I export markdown as HTML?","acceptedAnswer":{"@type":"Answer","text":"Yes. Click the Export HTML button to download a standalone HTML file with your rendered markdown content, ready to use anywhere."}},
+    {"@type":"Question","name":"Is this markdown editor free?","acceptedAnswer":{"@type":"Answer","text":"Yes, completely free with no signup required. All processing happens in your browser — your content is never sent to any server."}}
+  ]
+}
+</script>
+</head>
+<body>
+
+<header>
+  <div class="logo">Markdown <span>Preview</span></div>
+  <div class="toolbar">
+    <button onclick="App.copyHtml()" title="Copy rendered HTML">Copy HTML</button>
+    <button onclick="App.exportHtml()" title="Download as HTML file">Export HTML</button>
+    <button class="accent" onclick="App.checkQuality()" title="Check writing quality">Check Writing Quality</button>
+    <button onclick="App.loadSample()" title="Load sample markdown">Sample</button>
+    <button onclick="App.clearEditor()" title="Clear editor">Clear</button>
+  </div>
+</header>
+
+<div class="main">
+  <div class="pane">
+    <div class="pane-header"><span>Markdown Editor</span></div>
+    <textarea id="editor" placeholder="Type or paste your markdown here..." spellcheck="false"></textarea>
+  </div>
+  <div class="divider"></div>
+  <div class="pane">
+    <div class="pane-header"><span>Preview</span></div>
+    <div id="preview"></div>
+  </div>
+</div>
+
+<div class="status-bar">
+  <span id="wordCount">Words: 0</span>
+  <span id="charCount">Characters: 0</span>
+  <span id="readTime">Reading time: 0 min</span>
+  <span id="lineCount">Lines: 0</span>
+</div>
+
+<div class="overlay" id="overlay" onclick="App.closeQuality()"></div>
+<div class="quality-panel" id="qualityPanel">
+  <button class="quality-close" onclick="App.closeQuality()">&times;</button>
+  <h3>Writing Quality Report</h3>
+  <div id="qualityResults"></div>
+  <div class="powered-by">
+    Powered by <a href="https://belikenative.com" target="_blank" rel="noopener">BeLikeNative</a> &mdash;
+    <a href="https://chromewebstore.google.com/detail/belikenative-ai-grammar-w/jbgkpmllnihjlkndomhgdpjfjbkdmoal" target="_blank" rel="noopener">Get the Chrome Extension</a> for AI-powered grammar fixes everywhere you write.
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<footer>
+  <a href="https://belikenative.com" target="_blank" rel="noopener">BeLikeNative</a>
+  <a href="https://chromewebstore.google.com/detail/belikenative-ai-grammar-w/jbgkpmllnihjlkndomhgdpjfjbkdmoal" target="_blank" rel="noopener">Chrome Extension</a>
+  <a href="https://theluckystrike.github.io/bln-readability-analyzer/" target="_blank" rel="noopener">Readability Analyzer</a>
+  <a href="https://theluckystrike.github.io/bln-email-subject-tester/" target="_blank" rel="noopener">Email Subject Tester</a>
+  <a href="https://theluckystrike.github.io/bln-text-diff/" target="_blank" rel="noopener">Text Diff Tool</a>
+  <a href="https://theluckystrike.github.io/bln-writing-guide/" target="_blank" rel="noopener">Writing Guide</a>
+  <span style="margin-left:8px">&copy; 2026 BeLikeNative. Free developer tools.</span>
+</footer>
+
+<script>
+"use strict";
+var App = (function() {
+  /* ── Constants ── */
+  var MAX_INPUT = 50000;
+  var DEBOUNCE_MS = 200;
+  var MAX_LINES_QUALITY = 500;
+  var WORDS_PER_MIN = 200;
+  var timer = null;
+
+  /* ── DOM refs ── */
+  var editor = document.getElementById("editor");
+  var preview = document.getElementById("preview");
+
+  /* ── Assertions ── */
+  function assert(cond, msg) {
+    if (!cond) { console.error("Assertion failed: " + msg); }
+  }
+
+  /* ── Toast ── */
+  function showToast(msg) {
+    var t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(function() { t.classList.remove("show"); }, 2000);
+  }
+
+  /* ── Escape HTML ── */
+  function esc(s) {
+    assert(typeof s === "string", "esc expects string");
+    return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+
+  /* ── Syntax highlight code blocks ── */
+  function highlightCode(code) {
+    assert(typeof code === "string", "highlightCode expects string");
+    var result = esc(code);
+    result = result.replace(/(\/\/[^\n]*)/g, '<span class="kw-comment">$1</span>');
+    result = result.replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="kw-comment">$1</span>');
+    result = result.replace(/(#[^\n]*)/g, '<span class="kw-comment">$1</span>');
+    result = result.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)/g, '<span class="kw-string">$1</span>');
+    result = result.replace(/\b(\d+\.?\d*)\b/g, '<span class="kw-number">$1</span>');
+    result = result.replace(/\b(function|const|let|var|return|if|else|for|while|class|import|export|from|def|print|async|await|try|catch|throw|new|this|switch|case|break|continue)\b/g, '<span class="kw-keyword">$1</span>');
+    return result;
+  }
+
+  /* ── Parse tables ── */
+  function parseTable(lines) {
+    assert(Array.isArray(lines), "parseTable expects array");
+    if (lines.length < 2) { return null; }
+    var headerCells = lines[0].replace(/^\||\|$/g,"").split("|").map(function(c){return c.trim();});
+    var sepLine = lines[1].trim();
+    if (!/^[\|\s:\-]+$/.test(sepLine)) { return null; }
+    var html = "<table><thead><tr>";
+    for (var h = 0; h < headerCells.length && h < 50; h++) {
+      html += "<th>" + esc(headerCells[h]) + "</th>";
+    }
+    html += "</tr></thead><tbody>";
+    for (var r = 2; r < lines.length && r < 200; r++) {
+      var cells = lines[r].replace(/^\||\|$/g,"").split("|");
+      html += "<tr>";
+      for (var c = 0; c < cells.length && c < 50; c++) {
+        html += "<td>" + parseInline(cells[c].trim()) + "</td>";
+      }
+      html += "</tr>";
+    }
+    html += "</tbody></table>";
+    return html;
+  }
+
+  /* ── Parse inline markdown ── */
+  function parseInline(text) {
+    assert(typeof text === "string", "parseInline expects string");
+    var s = esc(text);
+    s = s.replace(/`([^`]+)`/g, "<code>$1</code>");
+    s = s.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">');
+    s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+    s = s.replace(/__([^_]+)__/g, "<strong>$1</strong>");
+    s = s.replace(/\*([^*]+)\*/g, "<em>$1</em>");
+    s = s.replace(/_([^_]+)_/g, "<em>$1</em>");
+    s = s.replace(/~~([^~]+)~~/g, "<del>$1</del>");
+    return s;
+  }
+
+  /* ── Parse full markdown to HTML ── */
+  function parseMarkdown(src) {
+    assert(typeof src === "string", "parseMarkdown expects string");
+    if (src.length > MAX_INPUT) { src = src.substring(0, MAX_INPUT); }
+    var lines = src.split("\n");
+    var html = "";
+    var i = 0;
+    var inList = false;
+    var listType = "";
+
+    while (i < lines.length) {
+      var line = lines[i];
+
+      /* Code block */
+      if (/^```/.test(line)) {
+        var codeLines = [];
+        i++;
+        for (var bound = 0; i < lines.length && bound < 1000; i++, bound++) {
+          if (/^```/.test(lines[i])) { i++; break; }
+          codeLines.push(lines[i]);
+        }
+        html += "<pre><code>" + highlightCode(codeLines.join("\n")) + "</code></pre>";
+        continue;
+      }
+
+      /* Table */
+      if (/^\|.+\|/.test(line) && i + 1 < lines.length && /^[\|\s:\-]+$/.test(lines[i+1])) {
+        var tableLines = [];
+        for (var tb = 0; i < lines.length && /^\|/.test(lines[i]) && tb < 200; i++, tb++) {
+          tableLines.push(lines[i]);
+        }
+        var tableHtml = parseTable(tableLines);
+        if (tableHtml) { html += tableHtml; }
+        continue;
+      }
+
+      /* Close list if non-list line */
+      if (inList && !/^\s*[-*+]\s/.test(line) && !/^\s*\d+\.\s/.test(line) && line.trim() !== "") {
+        html += "</" + listType + ">";
+        inList = false;
+      }
+
+      /* Heading */
+      if (/^#{1,6}\s/.test(line)) {
+        var level = line.match(/^(#{1,6})\s/)[1].length;
+        html += "<h" + level + ">" + parseInline(line.replace(/^#{1,6}\s+/, "")) + "</h" + level + ">";
+        i++; continue;
+      }
+
+      /* HR */
+      if (/^(\*{3,}|-{3,}|_{3,})\s*$/.test(line.trim())) {
+        html += "<hr>";
+        i++; continue;
+      }
+
+      /* Blockquote */
+      if (/^>\s?/.test(line)) {
+        var bqLines = [];
+        for (var bq = 0; i < lines.length && /^>\s?/.test(lines[i]) && bq < 200; i++, bq++) {
+          bqLines.push(lines[i].replace(/^>\s?/, ""));
+        }
+        html += "<blockquote>" + parseInline(bqLines.join(" ")) + "</blockquote>";
+        continue;
+      }
+
+      /* Unordered list */
+      if (/^\s*[-*+]\s/.test(line)) {
+        if (!inList || listType !== "ul") {
+          if (inList) { html += "</" + listType + ">"; }
+          html += "<ul>"; inList = true; listType = "ul";
+        }
+        html += "<li>" + parseInline(line.replace(/^\s*[-*+]\s+/, "")) + "</li>";
+        i++; continue;
+      }
+
+      /* Ordered list */
+      if (/^\s*\d+\.\s/.test(line)) {
+        if (!inList || listType !== "ol") {
+          if (inList) { html += "</" + listType + ">"; }
+          html += "<ol>"; inList = true; listType = "ol";
+        }
+        html += "<li>" + parseInline(line.replace(/^\s*\d+\.\s+/, "")) + "</li>";
+        i++; continue;
+      }
+
+      /* Empty line */
+      if (line.trim() === "") {
+        if (inList) { html += "</" + listType + ">"; inList = false; }
+        i++; continue;
+      }
+
+      /* Paragraph */
+      html += "<p>" + parseInline(line) + "</p>";
+      i++;
+    }
+
+    if (inList) { html += "</" + listType + ">"; }
+    return html;
+  }
+
+  /* ── Update preview ── */
+  function updatePreview() {
+    var src = editor.value;
+    preview.innerHTML = parseMarkdown(src);
+    updateStats(src);
+  }
+
+  /* ── Update stats ── */
+  function updateStats(src) {
+    assert(typeof src === "string", "updateStats expects string");
+    var words = src.trim() === "" ? 0 : src.trim().split(/\s+/).length;
+    var chars = src.length;
+    var lineArr = src.split("\n");
+    var readMin = Math.max(1, Math.ceil(words / WORDS_PER_MIN));
+    document.getElementById("wordCount").textContent = "Words: " + words;
+    document.getElementById("charCount").textContent = "Characters: " + chars;
+    document.getElementById("readTime").textContent = "Reading time: " + readMin + " min";
+    document.getElementById("lineCount").textContent = "Lines: " + lineArr.length;
+  }
+
+  /* ── Debounced input handler ── */
+  editor.addEventListener("input", function() {
+    if (timer) { clearTimeout(timer); }
+    timer = setTimeout(updatePreview, DEBOUNCE_MS);
+  });
+
+  /* ── Copy HTML ── */
+  function copyHtml() {
+    var html = preview.innerHTML;
+    if (!html) { showToast("Nothing to copy"); return; }
+    navigator.clipboard.writeText(html).then(function() {
+      showToast("HTML copied to clipboard");
+    });
+  }
+
+  /* ── Export HTML ── */
+  function exportHtml() {
+    var html = preview.innerHTML;
+    if (!html) { showToast("Nothing to export"); return; }
+    var full = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\">";
+    full += "<title>Exported Markdown</title>";
+    full += "<style>body{font-family:sans-serif;max-width:800px;margin:40px auto;padding:0 20px;line-height:1.6}";
+    full += "pre{background:#f4f4f4;padding:12px;border-radius:6px;overflow-x:auto}";
+    full += "code{background:#f4f4f4;padding:2px 5px;border-radius:3px}";
+    full += "blockquote{border-left:3px solid #ccc;padding-left:16px;color:#666}";
+    full += "table{border-collapse:collapse;width:100%}th,td{border:1px solid #ddd;padding:8px}";
+    full += "img{max-width:100%}</style></head><body>" + html + "</body></html>";
+    var blob = new Blob([full], { type: "text/html" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "markdown-export.html";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    showToast("HTML file downloaded");
+  }
+
+  /* ── Grammar/Quality rules ── */
+  function buildRules() {
+    return [
+      { re: /\b(very|really|just|actually|basically|literally)\b/gi, msg: "Filler word detected", level: "warning" },
+      { re: /\b(utilize)\b/gi, msg: "Prefer \"use\" over \"utilize\"", level: "warning" },
+      { re: /\b(in order to)\b/gi, msg: "Simplify \"in order to\" to \"to\"", level: "warning" },
+      { re: /\b(i)\b(?!')/g, msg: "Lowercase \"i\" should be \"I\"", level: "error" },
+      { re: /\s{2,}/g, msg: "Multiple consecutive spaces detected", level: "warning" },
+      { re: /[.!?]\s*[a-z]/g, msg: "Sentence may start with lowercase letter", level: "error" },
+      { re: /\b(could of|would of|should of)\b/gi, msg: "Use \"could have\" not \"could of\"", level: "error" },
+      { re: /\b(their|there|they're)\b/gi, msg: "Check their/there/they're usage", level: "warning" },
+      { re: /\b(its|it's)\b/gi, msg: "Check its/it's usage", level: "warning" },
+      { re: /\b(your|you're)\b/gi, msg: "Check your/you're usage", level: "warning" },
+      { re: /\b(alot)\b/gi, msg: "\"Alot\" should be \"a lot\"", level: "error" },
+      { re: /\b(irregardless)\b/gi, msg: "Use \"regardless\" instead of \"irregardless\"", level: "error" },
+      { re: /([!?.])\1{2,}/g, msg: "Excessive punctuation", level: "warning" },
+      { re: /\b(\w+)\s+\1\b/gi, msg: "Possible repeated word", level: "error" }
+    ];
+  }
+
+  /* ── Check quality ── */
+  function checkQuality() {
+    var src = editor.value.trim();
+    if (!src) { showToast("No text to check"); return; }
+    var rules = buildRules();
+    var issues = [];
+    var textLines = src.split("\n");
+    var linesToCheck = Math.min(textLines.length, MAX_LINES_QUALITY);
+
+    for (var li = 0; li < linesToCheck; li++) {
+      var line = textLines[li];
+      if (/^```|^#|^\|/.test(line)) { continue; }
+      for (var ri = 0; ri < rules.length; ri++) {
+        var rule = rules[ri];
+        var re = new RegExp(rule.re.source, rule.re.flags);
+        var m;
+        for (var safety = 0; (m = re.exec(line)) !== null && safety < 50; safety++) {
+          issues.push({ line: li + 1, match: m[0], msg: rule.msg, level: rule.level });
+        }
+      }
+    }
+
+    renderQualityResults(issues, src);
+  }
+
+  /* ── Render quality results ── */
+  function renderQualityResults(issues, src) {
+    assert(Array.isArray(issues), "issues must be array");
+    var el = document.getElementById("qualityResults");
+    var html = "";
+
+    if (issues.length === 0) {
+      html = '<div class="quality-item good">No issues found. Your writing looks clean!</div>';
+    } else {
+      html += '<div class="quality-item ' + (issues.length > 10 ? "error" : "warning") + '">';
+      html += "Found " + issues.length + " potential issue" + (issues.length === 1 ? "" : "s") + "</div>";
+      var limit = Math.min(issues.length, 30);
+      for (var i = 0; i < limit; i++) {
+        var issue = issues[i];
+        html += '<div class="quality-item ' + issue.level + '">';
+        html += "Line " + issue.line + ": " + esc(issue.msg);
+        html += ' &mdash; "' + esc(issue.match) + '"</div>';
+      }
+      if (issues.length > 30) {
+        html += '<div class="quality-item warning">...and ' + (issues.length - 30) + " more issues</div>";
+      }
+    }
+
+    /* Readability stats */
+    var words = src.trim().split(/\s+/).length;
+    var sentences = src.split(/[.!?]+/).filter(function(s){return s.trim().length > 0;}).length;
+    var avgWordsPerSentence = sentences > 0 ? (words / sentences).toFixed(1) : 0;
+    html += '<div class="quality-item ' + (avgWordsPerSentence > 25 ? "warning" : "good") + '">';
+    html += "Avg words per sentence: " + avgWordsPerSentence;
+    if (avgWordsPerSentence > 25) { html += " (consider shorter sentences)"; }
+    html += "</div>";
+
+    el.innerHTML = html;
+    document.getElementById("qualityPanel").classList.add("show");
+    document.getElementById("overlay").classList.add("show");
+  }
+
+  /* ── Close quality panel ── */
+  function closeQuality() {
+    document.getElementById("qualityPanel").classList.remove("show");
+    document.getElementById("overlay").classList.remove("show");
+  }
+
+  /* ── Clear editor ── */
+  function clearEditor() {
+    editor.value = "";
+    preview.innerHTML = "";
+    updateStats("");
+  }
+
+  /* ── Sample markdown ── */
+  function loadSample() {
+    editor.value = "# Welcome to Markdown Preview\n\nThis is a **live markdown editor** with instant preview.\n\n## Features\n\n- Real-time rendering\n- Syntax highlighting for code\n- Export to HTML\n- Writing quality checks\n\n## Code Example\n\n```javascript\nfunction greet(name) {\n  const message = `Hello, ${name}!`;\n  console.log(message);\n  return message;\n}\n```\n\n## Blockquote\n\n> The best way to predict the future is to create it.\n> — Abraham Lincoln\n\n## Table\n\n| Feature | Status |\n|---------|--------|\n| Headings | Supported |\n| Bold/Italic | Supported |\n| Code blocks | Supported |\n| Tables | Supported |\n| Lists | Supported |\n\n## Links\n\nCheck out [BeLikeNative](https://belikenative.com) for AI-powered writing assistance.\n\n---\n\n*Start editing on the left to see your markdown rendered here!*";
+    updatePreview();
+  }
+
+  /* ── Init ── */
+  loadSample();
+
+  /* ── Public API ── */
+  return {
+    copyHtml: copyHtml,
+    exportHtml: exportHtml,
+    checkQuality: checkQuality,
+    closeQuality: closeQuality,
+    clearEditor: clearEditor,
+    loadSample: loadSample
+  };
+})();
+</script>
+</body>
+</html>
